@@ -1,0 +1,72 @@
+[
+  {
+    "question": "How does Windmill handle job timeouts and what is the default timeout configuration?",
+    "ground_truth": "Windmill computes a global max timeout for jobs. Timeout handling is configurable per flow and script, with mechanisms to prevent infinite execution of jobs.",
+    "expected_files": ["backend/windmill-worker"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "How does Windmill implement OAuth2 authentication for external services?",
+    "ground_truth": "Windmill has OAuth2 integration supporting multiple providers with token refresh, scopes management, and secure credential storage.",
+    "expected_files": ["backend/windmill-api"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "What scripting languages does Windmill support and how are scripts executed?",
+    "ground_truth": "Windmill supports Python, TypeScript/Deno, Go, Bash, SQL, and other languages. Scripts are executed as isolated jobs with configurable dependencies and environments.",
+    "expected_files": ["backend/windmill-worker"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "How does Windmill handle flow control and conditional branching?",
+    "ground_truth": "Windmill flows support branching with conditional logic, loops, error handling with retry mechanisms, and approval steps for human-in-the-loop workflows.",
+    "expected_files": ["backend/windmill-worker"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "What is the architecture of Windmill's worker system?",
+    "ground_truth": "Windmill uses distributed workers that pull jobs from a queue. Workers can run different types of scripts, handle dependencies, and report results back to the API server.",
+    "expected_files": ["backend/windmill-worker"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "How does Windmill manage database connections and persistence?",
+    "ground_truth": "Windmill uses PostgreSQL for persistence with connection pooling. The database stores scripts, flows, schedules, job results, and audit logs.",
+    "expected_files": ["backend/windmill-common"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "What are the key issues reported in Windmill's issue tracker?",
+    "ground_truth": "Common issues include worker scaling problems, script execution failures, UI rendering bugs, API rate limiting, and integration issues with external services.",
+    "expected_files": [],
+    "repo": "windmill-labs/windmill",
+    "collection": "issues"
+  },
+  {
+    "question": "How does Windmill's frontend handle real-time updates and state management?",
+    "ground_truth": "Windmill uses Svelte for the frontend with real-time job status updates, reactive state management, and a component-based UI architecture.",
+    "expected_files": ["frontend/src"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  },
+  {
+    "question": "What deployment and configuration options does Windmill provide?",
+    "ground_truth": "Windmill supports Docker deployment, Kubernetes, and self-hosted setups with environment variable configuration for database, workers, and API settings.",
+    "expected_files": [],
+    "repo": "windmill-labs/windmill",
+    "collection": "documentation"
+  },
+  {
+    "question": "How does Windmill handle Python type schemas and dependency management?",
+    "ground_truth": "Windmill parses Python type annotations including Pydantic BaseModel for automatic schema generation, UI rendering, and input validation. Dependencies are managed via requirements.txt per script.",
+    "expected_files": ["backend/parsers"],
+    "repo": "windmill-labs/windmill",
+    "collection": "code"
+  }
+]

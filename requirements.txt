@@ -1,0 +1,84 @@
+# Core dependencies - PINNED VERSIONS to avoid dependency hell
+python-dotenv==1.0.1
+PyGithub==2.5.0
+google-generativeai==0.8.3
+requests==2.32.3
+
+# License validation with Supabase (upgraded to 2.10+ for httpx>=0.27 compatibility)
+supabase>=2.10.0
+
+# Google API dependencies - PINNED
+google-auth==2.35.0
+google-auth-oauthlib==1.2.1
+google-auth-httplib2==0.2.0
+google-api-python-client==2.149.0
+google-api-core>=2.15.0
+
+# LangChain - EXACT working versions from local env
+langchain==0.3.20
+langchain-core==0.3.71
+langchain-chroma==0.2.5
+langchain-google-genai==2.0.10
+langchain-community==0.3.19
+langchain-text-splitters==0.3.6
+
+# Vector database
+chromadb==1.0.15
+
+# Text processing
+pypdf==5.1.0
+python-docx==1.1.2
+
+# HTTP
+httpx==0.27.2
+aiofiles==24.1.0
+
+# Progress bars
+tqdm==4.67.1
+
+# Python utilities
+pillow==11.0.0
+filetype==1.2.0
+
+# GitHub operations
+GitPython==3.1.43
+
+# Protobuf (>=4.25.8 required by google-api-core)
+protobuf>=4.25.8
+
+# MCP SDK
+mcp==1.2.0
+
+# Google AI
+google-ai-generativelanguage==0.6.10
+
+# gRPC dependencies (required by google-api-core)
+grpcio==1.68.1
+grpcio-status>=1.62.0
+
+# Logging
+loguru==0.7.3
+
+# System monitoring
+psutil==7.1.3
+
+# Offline embeddings
+fastembed==0.7.3
+
+# Anthropic Claude support
+langchain-anthropic>=0.3.0
+anthropic>=0.40.0
+
+# Unified LLM routing (Gemini, Claude, Grok, OpenAI, Ollama, 100+ providers)
+litellm>=1.40.0
+
+# Rich TUI
+rich>=13.0.0
+
+# Textual TUI framework
+textual>=0.89.0
+
+# REMOVED: Documentation tools (not needed in Docker)
+# mkdocs
+# mkdocs-material
+# mkdocs-macros-plugin

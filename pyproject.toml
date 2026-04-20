@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gis-cli"
+version = "4.0.0"
+description = "GIS — Autonomous GitHub Issue Solver. RAG-powered CLI agent that ingests repos, analyzes issues, generates patches, and creates PRs."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Devdatta Talele", email = "devdattatalele@gmail.com"},
+]
+keywords = ["gis", "github", "issue-solver", "rag", "llm", "mcp", "agent", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Bug Tracking",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "PyGithub>=2.5.0",
+    "google-generativeai>=0.8.0",
+    "requests>=2.31.0",
+    "langchain>=0.3.20",
+    "langchain-core>=0.3.71",
+    "langchain-chroma>=0.2.5",
+    "langchain-google-genai>=2.0.10",
+    "langchain-community>=0.3.19",
+    "langchain-text-splitters>=0.3.6",
+    "langchain-anthropic>=0.3.0",
+    "anthropic>=0.40.0",
+    "chromadb>=1.0.0",
+    "GitPython>=3.1.40",
+    "loguru>=0.7.0",
+    "rich>=13.0.0",
+    "click>=8.1.0",
+    "fastembed>=0.7.0",
+    "httpx>=0.27.0",
+    "aiofiles>=24.1.0",
+    "psutil>=7.0.0",
+    "textual>=0.89.0",
+    "protobuf>=4.25.0",
+    "google-auth>=2.20.0",
+    "google-auth-oauthlib>=1.0.0",
+    "google-api-python-client>=2.100.0",
+    "mcp>=1.2.0",
+    "litellm>=1.40.0",
+    "fpdf2>=2.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/devdattatalele/GIS"
+Repository = "https://github.com/devdattatalele/GIS"
+Issues = "https://github.com/devdattatalele/GIS/issues"
+
+[project.scripts]
+gis = "cli_agent.main:main"
+
+[tool.setuptools.packages.find]
+where = [".", "src"]
+include = ["cli_agent*", "github_issue_solver*", "issue_solver*", "evals*"]
+
+[tool.setuptools.package-data]
+evals = ["golden_dataset.json"]

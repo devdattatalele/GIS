@@ -1,0 +1,234 @@
+{
+  "timestamp": "2026-04-20T14:30:52.949525",
+  "config": {
+    "llm_provider": "gemini",
+    "llm_model": "gemini-2.5-flash",
+    "embedding_provider": "fastembed",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "top_k": 5
+  },
+  "summary": {
+    "total_questions": 10,
+    "scored_questions": 10,
+    "skipped": 0,
+    "overall_score": 0.8675,
+    "context_precision": 0.835,
+    "context_recall": 0.815,
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.82,
+    "avg_retrieval_time_s": 0.417,
+    "avg_generation_time_s": 6.867
+  },
+  "results": [
+    {
+      "question": "How does Windmill handle job timeouts and what is the default timeout configuration?",
+      "ground_truth": "Windmill computes a global max timeout for jobs. Timeout handling is configurable per flow and script, with mechanisms to prevent infinite execution of jobs.",
+      "answer": "Windmill handles AI HTTP request timeouts by applying a total duration timeout, including streaming responses. The default timeout for these AI requests is 3600 seconds (1 hour). This timeout can be configured via the `AI_REQUEST_TIMEOUT_SECONDS` environment variable, with a valid range of 1 to 86400 seconds (24 hours).\n\nThe context also mentions a `timeout` field within the `NewScript` structure, but does not provide details on how this specific job timeout is handled or its default configuration.",
+      "metrics": {
+        "context_precision": 0.8,
+        "context_recall": 0.7,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.4
+      },
+      "avg_score": 0.725,
+      "retrieval_time_s": 3.325,
+      "generation_time_s": 6.142,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.7277,
+      "sources": [
+        "backend/windmill-api/src/ai.rs",
+        "backend/tests/relock_skip.rs",
+        "backend/windmill-queue/src/jobs_oss.rs"
+      ]
+    },
+    {
+      "question": "How does Windmill implement OAuth2 authentication for external services?",
+      "ground_truth": "Windmill has OAuth2 integration supporting multiple providers with token refresh, scopes management, and secure credential storage.",
+      "answer": "Windmill implements OAuth2 authentication for external services by exposing API endpoints at `/mcp/oauth/server` and `/w/:workspace_id/mcp/oauth/server`, handled by `mcp::oauth_server::workspaced_authed_service()` and `mcp::oauth_server::workspaced_unauthed_service()`. It uses the `windmill_oauth` crate to connect to services like Slack, Teams, or Google for user authentication and to obtain access tokens. The context does not provide the specific implementation details of the OAuth2 protocol.",
+      "metrics": {
+        "context_precision": 0.9,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6
+      },
+      "avg_score": 0.875,
+      "retrieval_time_s": 0.128,
+      "generation_time_s": 6.636,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.7519,
+      "sources": [
+        "backend/windmill-api/src/lib.rs",
+        "backend/windmill-api/src/lib.rs",
+        "frontend/src/lib/components/AuthSettings.svelte"
+      ]
+    },
+    {
+      "question": "What scripting languages does Windmill support and how are scripts executed?",
+      "ground_truth": "Windmill supports Python, TypeScript/Deno, Go, Bash, SQL, and other languages. Scripts are executed as isolated jobs with configurable dependencies and environments.",
+      "answer": "Windmill supports the following scripting languages: bash, bun, deno, go, python3, rust, postgresql, and nu (Nushell).\n\nScripts must export a `main` function and are executed by the Windmill client (`wmill`) which provides APIs for interacting with the platform. Parameters are passed to the script, and return values are JSON-serializable. For Nushell, the script content is wrapped, written to a file (e.g., `main.nu`), and then executed as a child process, potentially within an isolated environment.",
+      "metrics": {
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9
+      },
+      "avg_score": 0.975,
+      "retrieval_time_s": 0.086,
+      "generation_time_s": 6.863,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.7678,
+      "sources": [
+        "system_prompts/auto-generated/prompts.d.ts",
+        "integration_tests/test/identity_script_test.py",
+        "backend/windmill-worker/src/nu_executor.rs"
+      ]
+    },
+    {
+      "question": "How does Windmill handle flow control and conditional branching?",
+      "ground_truth": "Windmill flows support branching with conditional logic, loops, error handling with retry mechanisms, and approval steps for human-in-the-loop workflows.",
+      "answer": "Windmill handles flow control and conditional branching through specific module types:\n\n*   **Sequential Execution**: Flows consist of modules that execute sequentially.\n*   **Loops**: The `forloopflow` module contains nested modules that execute per iteration.\n*   **Conditional Branching**:\n    *   `branchone` modules execute the first matching branch.\n    *   `branchall` modules execute all matching branches.\n    *   Branches have conditional expressions (`expr`) that determine their execution.\n*   **Retries**: Modules can be configured with `retry` settings (e.g., `constant` with `attempts` and `seconds`).",
+      "metrics": {
+        "context_precision": 1.0,
+        "context_recall": 0.75,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9
+      },
+      "avg_score": 0.9125,
+      "retrieval_time_s": 0.078,
+      "generation_time_s": 5.074,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.6469,
+      "sources": [
+        "frontend/src/lib/components/copilot/chat/__tests__/flow/flowEvalComparison.ts",
+        "backend/tests/worker.rs",
+        "backend/windmill-autoscaling/src/autoscaling_oss.rs"
+      ]
+    },
+    {
+      "question": "What is the architecture of Windmill's worker system?",
+      "ground_truth": "Windmill uses distributed workers that pull jobs from a queue. Workers can run different types of scripts, handle dependencies, and report results back to the API server.",
+      "answer": "Windmill's worker system is designed to execute various types of jobs. Its architecture includes:\n\n*   **Job Queuing and Processing:** It uses `windmill_queue` to `pull` jobs and `push_init_job`, `push_periodic_bash_job`, and `get_same_worker_job`. Job completion is handled via `JobCompletedSender`.\n*   **Modular Execution:** It features dedicated handlers for different languages and services, such as `handle_ai_agent_job`, `handle_bash_job`, `handle_bun_job`, `handle_csharp_job`, `handle_deno_job`, `handle_go_job`, `do_graphql`, `handle_powershell_job`, `do_postgresql`, `handle_flow`, `handle_rust_job`, `handle_nu_job`, `handle_java_job`, `handle_ruby_job`, `handle_php_job`, `handle_python_job`, `handle_ansible_job`, `do_mysql`, `do_duckdb`, `do_oracledb`, `do_snowflake`, `do_mssql`, and `do_bigquery`. It also includes handlers for app, flow, and general dependencies (`handle_app_dependency_job`, `handle_flow_dependency_job`, `handle_dependency_job`).\n*   **Caching and Runtime Assets:** It utilizes `ROOT_CACHE_DIR` and `ROOT_CACHE_NOMOUNT_DIR` for various language-specific caches (e.g., `PY310_CACHE_DIR`, `DENO_CACHE_DIR`, `GO_CACHE_DIR`, `JAVA_CACHE_DIR`, `BUN_CACHE_DIR`). It initializes and registers runtime assets through `init_runtime_asset_loop` and `register_runtime_asset`.\n*   **Configuration and Utilities:** It uses `windmill_common::worker` for connection management, HTTP clients, timeouts, and worker configuration (`WORKER_CONFIG`, `WORKER_GROUP`).\n*   **Database Interaction:** It interacts with `DB` and `UserDbWithAuthed`.\n*   **Concurrency and Communication:** It uses `tokio::sync::Mutex`, `tokio::sync::RwLock`, `mpsc::Sender`, `mpsc::Receiver`, and `broadcast` channels for managing concurrent tasks and inter-task communication.\n*   **Monitoring and Health:** It includes mechanisms for worker pings (`insert_ping`, `update_worker_ping_full`) and job statistics (`JobStatsMap`).\n*   **Result Processing:** After execution, results are processed by `process_result` and errors by `handle_job_error`, with a background processor (`start_background_processor`).\n*   **Dependency Management:** It uses `ScopedDependencyMap` to manage dependencies.\n*   **Schema Validation:** It performs schema validation using `SchemaValidator`.\n*   **Tracing:** Supports OpenTelemetry tracing with `OtelTracingProxySettings`.",
+      "metrics": {
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0
+      },
+      "avg_score": 1.0,
+      "retrieval_time_s": 0.065,
+      "generation_time_s": 13.294,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.6118,
+      "sources": [
+        "backend/windmill-api-agent-workers/src/lib.rs",
+        "backend/windmill-api/src/workspaces.rs",
+        "backend/windmill-api-groups/src/groups.rs"
+      ]
+    },
+    {
+      "question": "How does Windmill manage database connections and persistence?",
+      "ground_truth": "Windmill uses PostgreSQL for persistence with connection pooling. The database stores scripts, flows, schedules, job results, and audit logs.",
+      "answer": "For PostgreSQL, Windmill manages database connections using `sqlx::Pool<Postgres>` and persistence through `sqlx::Transaction`.\n\nFor OracleDB, connections are managed using `Arc<std::sync::Mutex<oracle::Connection>>` for shared, thread-safe access, with persistence handled by `c.commit()`.\n\nFor MySQL, connections are managed using `Arc<Mutex<mysql_async::Conn>>` for shared, thread-safe access.\n\nThe provided context does not contain enough information to describe how OracleDB or MySQL connections are pooled.",
+      "metrics": {
+        "context_precision": 1.0,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9
+      },
+      "avg_score": 0.975,
+      "retrieval_time_s": 0.12,
+      "generation_time_s": 6.716,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.6916,
+      "sources": [
+        "backend/windmill-worker/src/oracledb_executor.rs",
+        "backend/windmill-api-schedule/src/lib.rs",
+        "backend/windmill-worker/src/common.rs"
+      ]
+    },
+    {
+      "question": "What are the key issues reported in Windmill's issue tracker?",
+      "ground_truth": "Common issues include worker scaling problems, script execution failures, UI rendering bugs, API rate limiting, and integration issues with external services.",
+      "answer": "The key issues reported in Windmill's issue tracker are:\n\n1.  **AI Agent Step Configuration Instability**:\n    *   Output type incorrectly set to `json` by the AI, which is unsupported.\n    *   Memory block configuration causes the UI to break or become unresponsive.\n    *   AI provider settings are often configured incorrectly and cannot be corrected via the UI.\n    *   The UI becomes stuck and unrecoverable when the AI misconfigures a node.\n    *   *(Note: This issue was later resolved.)*\n2.  **Helm Chart Image Pull Failure**:\n    *   The `windmill-extra` pods fail to start when deploying or upgrading the Windmill Helm chart to version 1.644.0 because the `ghcr.io/windmill-labs/windmill-extra:1.644.0` image is unavailable.\n    *   *(Note: This issue was later fixed.)*\n3.  **Database Manager Timeout Error**:\n    *   The Database Manager displays an infinite loading spinner and eventually a \"500 Internal Server Error (timeout after 600s)\" when attempting to manage a Data Table in a self-hosted Docker standalone setup (v1.648.0-9-g4a14e9436e). This occurs despite other scripts and the database functioning correctly, suggesting an issue with the internal database connection for the manager.",
+      "metrics": {
+        "context_precision": 0.8,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0
+      },
+      "avg_score": 0.95,
+      "retrieval_time_s": 0.084,
+      "generation_time_s": 5.12,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.6204,
+      "sources": [
+        "issue #7866",
+        "issue #8074",
+        "issue #8261"
+      ]
+    },
+    {
+      "question": "How does Windmill's frontend handle real-time updates and state management?",
+      "ground_truth": "Windmill uses Svelte for the frontend with real-time job status updates, reactive state management, and a component-based UI architecture.",
+      "answer": "The provided context does not contain enough information to answer how Windmill's frontend handles real-time updates and state management. The context primarily details backend services, database interactions, and worker configurations.",
+      "metrics": {
+        "context_precision": 0.0,
+        "context_recall": 0.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0
+      },
+      "avg_score": 0.5,
+      "retrieval_time_s": 0.138,
+      "generation_time_s": 3.953,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.6715,
+      "sources": [
+        "backend/src/main.rs",
+        "backend/windmill-api/src/workspaces_export.rs",
+        "backend/windmill-api-workspaces/src/workspaces_extra.rs"
+      ]
+    },
+    {
+      "question": "What deployment and configuration options does Windmill provide?",
+      "ground_truth": "Windmill supports Docker deployment, Kubernetes, and self-hosted setups with environment variable configuration for database, workers, and API settings.",
+      "answer": "Windmill provides the following deployment and configuration options:\n\n**Deployment Models for Instance Configuration:**\n*   **`sync-config` CLI**: Best for Docker Compose, VMs, and CI/CD pipelines. It reads a YAML config file, resolves `envRef` references, computes a diff with the database state, and applies changes.\n*   **Kubernetes Operator**: Best for Kubernetes clusters. It watches a ConfigMap and continuously reconciles the database to match the declared state, supporting `secretKeyRef` for Kubernetes Secrets.\n\n**Ephemeral Backend Manager Deployment:**\n*   As a **systemd service** on a Linux machine.\n\n**Backend Deployment/Running Options (from build guide):**\n*   **Docker**: The backend can be run by Docker using `docker compose up` or built from local source code using `docker/dev.nu`.\n*   **Cargo**: The backend can be run directly using `cargo run` after setting up a local database.",
+      "metrics": {
+        "context_precision": 0.85,
+        "context_recall": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevancy": 1.0
+      },
+      "avg_score": 0.9625,
+      "retrieval_time_s": 0.064,
+      "generation_time_s": 3.981,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.7059,
+      "sources": [
+        "ephemeral-backends/DEPLOYMENT.md",
+        "frontend/README_DEV.md",
+        "examples/deploy/instance-config-iac/README.md"
+      ]
+    },
+    {
+      "question": "How does Windmill handle Python type schemas and dependency management?",
+      "ground_truth": "Windmill parses Python type annotations including Pydantic BaseModel for automatic schema generation, UI rendering, and input validation. Dependencies are managed via requirements.txt per script.",
+      "answer": "Windmill handles Python dependency management by:\n*   Parsing Python code to identify imports, including automatically inferred (`Auto`), manually pinned (`Pin`), manually repinned (`Repin`), and relative imports. It uses regexes to find pin/repin annotations in comments.\n*   Generating lockfiles for scripts, flows, and apps. For Python, this involves using `uv pip compile`.\n*   Processing \"dependency jobs\" which are specifically designed to handle lockfile generation and dependency updates when dependencies or imported scripts change.\n*   Updating the `lock` content and `lockfile_hash` for scripts in the database after successful generation.\n*   Supporting workspace dependencies (e.g., `requirements.in`) which can trigger redeployment of dependent scripts.\n*   Maintaining a dependency map to track relationships between importers and imported paths, including relative imports.\n\nThe context mentions `PythonAnnotations` but does not provide information on how Windmill specifically handles Python type schemas.",
+      "metrics": {
+        "context_precision": 1.0,
+        "context_recall": 0.7,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5
+      },
+      "avg_score": 0.8,
+      "retrieval_time_s": 0.084,
+      "generation_time_s": 10.887,
+      "chunks_retrieved": 5,
+      "top_chunk_score": 0.7131,
+      "sources": [
+        "frontend/src/lib/infer.ts",
+        "backend/parsers/windmill-parser-py-imports/src/lib.rs",
+        "backend/tests/dependency_map.rs"
+      ]
+    }
+  ]
+}

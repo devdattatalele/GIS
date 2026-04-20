@@ -1,0 +1,98 @@
+/* ─── GIS Agent TUI ─── Unified dark theme ─── */
+
+/* Color tokens:
+ *   accent:    #4ec9b0  (teal)
+ *   surface:   #1e1e2e  (dark bg)
+ *   muted:     #585b70  (borders, dim text)
+ *   panel-bg:  #181825  (panel backgrounds)
+ */
+
+GISHeader {
+    dock: top;
+    height: 1;
+    background: #181825;
+    color: #cdd6f4;
+}
+
+Footer {
+    background: #181825;
+}
+
+#main-content {
+    height: 1fr;
+}
+
+/* ─── Left pane: Activity Log ─── */
+ActivityLog {
+    width: 1fr;
+    min-width: 40;
+    background: #1e1e2e;
+    border-right: vkey #313244;
+    padding: 0 1;
+}
+
+ActivityLog:focus {
+    border-right: vkey #4ec9b0;
+}
+
+/* ─── Right pane: Diff Viewer ─── */
+DiffViewer {
+    width: 2fr;
+    min-width: 30;
+    background: #1e1e2e;
+}
+
+DiffViewer:focus-within {
+    border-left: vkey #4ec9b0;
+}
+
+#diff-title {
+    height: 1;
+    background: #181825;
+    color: #a6adc8;
+    padding: 0 1;
+}
+
+#diff-content {
+    background: #1e1e2e;
+    padding: 0 1;
+}
+
+/* ─── PR Confirmation Modal ─── */
+ConfirmModal {
+    align: center middle;
+}
+
+#confirm-dialog {
+    width: 56;
+    height: 11;
+    background: #1e1e2e;
+    border: round #f9e2af;
+    padding: 1 2;
+}
+
+#confirm-title {
+    width: 100%;
+    content-align: center middle;
+    text-style: bold;
+    color: #f9e2af;
+    margin-bottom: 1;
+}
+
+#confirm-body {
+    width: 100%;
+    content-align: center middle;
+    color: #a6adc8;
+    margin-bottom: 1;
+}
+
+#confirm-buttons {
+    width: 100%;
+    height: 3;
+    align: center middle;
+}
+
+#confirm-buttons Button {
+    margin: 0 2;
+    min-width: 16;
+}
