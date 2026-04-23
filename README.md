@@ -20,31 +20,21 @@ gis <issue-url>      # resolve an issue
 
 ## Architecture
 
-```
-                    ┌─────────────────────────────────────────────────┐
-                    │                   GIS Agent                     │
-                    │                                                 │
-                    │   ┌──────────┐    ┌──────────┐                 │
-                    │   │  ReAct   │───>│ 11 Tools │                 │
-                    │   │  Loop    │<───│ (LangCh) │                 │
-                    │   └──────────┘    └──────────┘                 │
-                    │        │               │                        │
-                    │        ▼               ▼                        │
-                    │   ┌──────────┐    ┌──────────┐                 │
-                    │   │ LiteLLM  │    │ ChromaDB │                 │
-                    │   │ Router   │    │ VectorDB │                 │
-                    │   └──────────┘    └──────────┘                 │
-                    │   Gemini│Claude     Code│Docs                  │
-                    │   Grok│OpenAI      Issues│PRs                  │
-                    │   Ollama           Learnings                   │
-                    └─────────────────────────────────────────────────┘
-                         │                    │
-        ┌────────────────┘                    └────────────────┐
-        ▼                                                      ▼
-   ┌──────────┐                                          ┌──────────┐
-   │  CLI/TUI │  gis <url>                               │MCP Server│  Claude Desktop
-   │  (click) │  gis setup                               │ (FastMCP)│  Cursor / VS Code
-   └──────────┘  gis status                              └──────────┘  17 tools
+```mermaid
+graph TB
+  subgraph GIS["GIS Agent"]
+    R["ReAct Loop"] <--> T["11 Tools (LangCh)"]
+    R --> L["LiteLLM Router"]
+    T --> C["ChromaDB VectorDB"]
+
+    L --- LP["Gemini | Claude\nGrok | OpenAI\nOllama"]
+    C --- CP["Code | Docs\nIssues | PRs\nLearnings"]
+  end
+
+  CLI["CLI/TUI (click)\ngis <url>\ngis setup\ngis status"] --> GIS
+  MCP["MCP Server (FastMCP)\n17 tools"] --> GIS
+  CLIENT["Claude Desktop\nCursor / VS Code"] --> MCP
+
 ```
 ### Data Flow
 
@@ -352,17 +342,46 @@ CHROMA_PERSIST_DIR=./chroma_db
 
 ---
 
-## Threading Model
+### Async Architecture
 
-Three concurrency models bridged together:
+```mermaid
+graph LR
+  %% Core runtime split: async UI <-> sync agent <-> async services
 
-```
-Textual TUI (async)  ←──bridge──→  Agent Loop (sync)  ←──_run_async──→  Services (async)
-     │                                    │                                    │
-     │  call_from_thread()               │  blocking LLM calls               │  asyncio.to_thread()
-     │  (widget updates)                 │  tool execution                   │  (GitHub API, ChromaDB)
-     │                                    │                                    │
-  async event loop              @work(thread=True)                    new event loop per call
+  subgraph TUI["Textual TUI (async)"]
+    TUIEL["async event loop"]
+    TUIW["Widgets / UI updates"]
+    TUIEL --> TUIW
+  end
+
+  subgraph BR["Bridge"]
+    CFT["call_from_thread()\n(widget updates)"]
+  end
+
+  subgraph AG["Agent Loop (sync)"]
+    AGRUN["Agent loop\n(sync)"]
+    LLM["blocking LLM calls"]
+    TOOLS["tool execution"]
+    WK["@work(thread=True)"]
+    AGRUN --> LLM
+    AGRUN --> TOOLS
+    AGRUN --> WK
+  end
+
+  subgraph SVC["Services (async)"]
+    RUNASYNC["_run_async"]
+    TO_THREAD["asyncio.to_thread()\n(GitHub API, ChromaDB)"]
+    NEWEV["new event loop per call"]
+    RUNASYNC --> TO_THREAD
+    RUNASYNC --> NEWEV
+  end
+
+  %% Cross-boundary links
+  TUIW <--> CFT
+  CFT <--> AGRUN
+
+  AGRUN <--> RUNASYNC
+
 ```
 
 - **TUI**: Textual async app with reactive widgets
