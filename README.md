@@ -430,6 +430,17 @@ gis status
 
 ---
 
+## 🌟 Star History
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=devdattatalele/git-summary&type=Date)](https://www.star-history.com/#devdattatalele/GIS&Date)
+---
+
+**Built with ❤️ for the AI and developer community**
+
+[Report Bug](https://github.com/devdattatalele/GIS/issues) · [Request Feature](https://github.com/devdattatalele/GIS/issues) · [Documentation](docs/) · [Examples](examples/)
+
 ## License
 
 MIT License. See [LICENSE](LICENSE).
