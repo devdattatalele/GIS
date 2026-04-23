@@ -46,6 +46,22 @@ gis <issue-url>      # resolve an issue
    │  (click) │  gis setup                               │ (FastMCP)│  Cursor / VS Code
    └──────────┘  gis status                              └──────────┘  17 tools
 ```
+### Data Flow
+
+```mermaid
+graph LR
+    A[GitHub Repo] --> B[Ingest Tool]
+    B --> C[ChromaDB Vector Store]
+    C --> D[AI Analysis Agent]
+    D --> E[Patch Generation]
+    E --> F[GitHub PR Creation]
+    
+    G[Claude Desktop] --> H[MCP Server]
+    H --> B
+    H --> D
+    H --> E
+    H --> F
+```
 
 ### Module Layout
 
