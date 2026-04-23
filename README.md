@@ -22,35 +22,38 @@ gis <issue-url>      # resolve an issue
 
 ```mermaid
 graph TB
-  subgraph GIS["GIS Agent"]
-    R["ReAct Loop"] <--> T["11 Tools (LangCh)"]
-    R --> L["LiteLLM Router"]
-    T --> C["ChromaDB VectorDB"]
-
-    L --- LP["Gemini | Claude\nGrok | OpenAI\nOllama"]
-    C --- CP["Code | Docs\nIssues | PRs\nLearnings"]
+  subgraph INPUT["Entry Points"]
+    URL["GitHub Issue URL"] -->|"gis &lt;url&gt;"| CLI["CLI / TUI<br/>Click + Textual"]
+    IDE["Claude Desktop / Cursor"] -->|MCP| MCP["MCP Server<br/>FastMCP · 17 tools"]
   end
 
-  CLI["CLI/TUI (click)\ngis <url>\ngis setup\ngis status"] --> GIS
-  MCP["MCP Server (FastMCP)\n17 tools"] --> GIS
-  CLIENT["Claude Desktop\nCursor / VS Code"] --> MCP
+  CLI & MCP --> AGENT
 
-```
-### Data Flow
+  subgraph AGENT["GIS Agent"]
+    direction LR
+    LLM["LiteLLM Router<br/>Gemini · Claude · Grok · OpenAI · Ollama"]
+    LLM <-->|tool calls| TOOLS["11 LangChain Tools"]
+  end
 
-```mermaid
-graph LR
-    A[GitHub Repo] --> B[Ingest Tool]
-    B --> C[ChromaDB Vector Store]
-    C --> D[AI Analysis Agent]
-    D --> E[Patch Generation]
-    E --> F[GitHub PR Creation]
-    
-    G[Claude Desktop] --> H[MCP Server]
-    H --> B
-    H --> D
-    H --> E
-    H --> F
+  AGENT --> PIPELINE
+
+  subgraph PIPELINE["Resolution Pipeline"]
+    direction TB
+    INGEST["Ingest Repo"] --> ANALYZE["RAG Analysis"]
+    ANALYZE --> LEARN["Apply Learnings<br/>past fixes · never-do rules"]
+    LEARN --> PATCH["Generate Patches"]
+    PATCH --> FORK["Fork / Clone / Apply"]
+    FORK --> PR["Create PR"]
+  end
+
+  DB[(ChromaDB<br/>Code · Docs · Issues<br/>PRs · Learnings)]
+  INGEST -->|embed| DB
+  ANALYZE & LEARN -->|query| DB
+
+  GH["GitHub API"]
+  INGEST -->|fetch| GH
+  FORK -->|push| GH
+  PR -->|gh pr create| GH
 ```
 
 ### Module Layout
